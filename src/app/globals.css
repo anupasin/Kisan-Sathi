@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/* Dark mode driven by a `.dark` class on <html> (set by next-themes) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f4f7f1;
+  --foreground: #16231b;
+  --card: #ffffff;
+  --card-foreground: #16231b;
+  --muted: #e9efe4;
+  --muted-foreground: #5a6b5c;
+  --border: #dbe4d5;
+  --input: #dbe4d5;
+  --primary: #2f8f4e;
+  --primary-foreground: #ffffff;
+  --accent: #c9781f;
+  --accent-foreground: #ffffff;
+  --ring: #2f8f4e;
+  --success: #2f8f4e;
+  --warning: #c9781f;
+  --danger: #c2402f;
+  --danger-foreground: #ffffff;
+  --radius: 0.9rem;
+  --font-sans-app: var(--font-latin), var(--font-deva), system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+}
+
+.dark {
+  --background: #0c1310;
+  --foreground: #e6efe7;
+  --card: #131e18;
+  --card-foreground: #e6efe7;
+  --muted: #1a2820;
+  --muted-foreground: #96a89a;
+  --border: #263a2e;
+  --input: #263a2e;
+  --primary: #52b96f;
+  --primary-foreground: #06120a;
+  --accent: #e0913a;
+  --accent-foreground: #170d02;
+  --ring: #52b96f;
+  --success: #52b96f;
+  --warning: #e0913a;
+  --danger: #e0705f;
+  --danger-foreground: #1a0603;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --font-sans: var(--font-sans-app);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 0.3rem);
+  --radius-sm: calc(var(--radius) - 0.5rem);
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans-app), system-ui, sans-serif;
+  overscroll-behavior-y: none;
+}
+
+/* Hide scrollbars on horizontal scrollers but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-in {
+  animation: fade-in-up 0.35s ease both;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--muted);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--card) 55%, transparent),
+    transparent
+  );
+  animation: shimmer 1.4s infinite;
+}
