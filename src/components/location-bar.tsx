@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  MapPin,
-  LocateFixed,
-  RefreshCw,
-  TriangleAlert,
-  X,
-} from "lucide-react";
+import { MapPin, LocateFixed, TriangleAlert, Pencil } from "lucide-react";
 import { useLang } from "@/i18n/language-provider";
 import { useLocation } from "@/lib/location-provider";
 import { Button, Spinner } from "./ui";
@@ -72,28 +66,17 @@ export function LocationBar() {
           </p>
         </div>
       </div>
-      <div className="flex shrink-0 items-center gap-1.5">
-        <button
-          type="button"
-          onClick={detect}
-          disabled={locating}
-          aria-label={t("location.redetect")}
-          title={t("location.redetect")}
-          className="grid size-9 place-items-center rounded-full border border-border text-muted-foreground transition hover:bg-muted disabled:opacity-50"
-        >
-          {locating ? <Spinner /> : <RefreshCw className="size-4" />}
-        </button>
-        <button
-          type="button"
-          onClick={clear}
-          disabled={locating}
-          aria-label={t("location.change")}
-          title={t("location.change")}
-          className="grid size-9 place-items-center rounded-full border border-border text-muted-foreground transition hover:bg-muted disabled:opacity-50"
-        >
-          <X className="size-4" />
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={clear}
+        disabled={locating}
+        aria-label={t("location.change")}
+        title={t("location.change")}
+        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-2 text-sm font-semibold text-primary transition hover:bg-primary/15 active:scale-95 disabled:opacity-50"
+      >
+        {locating ? <Spinner /> : <Pencil className="size-4" />}
+        {t("location.change")}
+      </button>
     </div>
   );
 }
