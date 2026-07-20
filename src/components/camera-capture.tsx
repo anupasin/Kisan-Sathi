@@ -164,11 +164,12 @@ export function CameraCapture({
           </div>
         </div>
       )}
+      {/* No `capture` attribute: this opens the gallery / file picker.
+          Live camera is handled separately via getUserMedia above. */}
       <input
         ref={fileRef}
         type="file"
         accept="image/*"
-        capture="environment"
         onChange={onFile}
         className="hidden"
       />
