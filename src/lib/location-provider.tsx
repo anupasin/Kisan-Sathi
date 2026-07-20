@@ -19,6 +19,7 @@ type LocationContextValue = {
   place: Place | null;
   status: Status;
   detect: () => void;
+  clear: () => void;
 };
 
 const LocationContext = createContext<LocationContextValue | null>(null);
@@ -88,9 +89,20 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     );
   }, [resolvePlace]);
 
+  const clear = useCallback(() => {
+    setCoords(null);
+    setPlace(null);
+    setStatus("idle");
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   const value = useMemo(
-    () => ({ coords, place, status, detect }),
-    [coords, place, status, detect],
+    () => ({ coords, place, status, detect, clear }),
+    [coords, place, status, detect, clear],
   );
 
   return (

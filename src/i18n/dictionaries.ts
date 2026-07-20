@@ -36,6 +36,7 @@ const en = {
     detecting: "Finding your location…",
     detect: "Use my location",
     redetect: "Update location",
+    change: "Change location",
     permissionTitle: "Location needed",
     permissionBody:
       "Allow location access so we can show soil, crops and schemes for your area.",
@@ -186,6 +187,7 @@ const hi = {
     detecting: "आपका स्थान खोजा जा रहा है…",
     detect: "मेरा स्थान इस्तेमाल करें",
     redetect: "स्थान अपडेट करें",
+    change: "स्थान बदलें",
     permissionTitle: "स्थान की आवश्यकता",
     permissionBody:
       "अपने क्षेत्र की मिट्टी, फसल और योजनाएँ देखने के लिए स्थान की अनुमति दें।",

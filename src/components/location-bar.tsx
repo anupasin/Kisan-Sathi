@@ -1,13 +1,19 @@
 "use client";
 
-import { MapPin, LocateFixed, RefreshCw, TriangleAlert } from "lucide-react";
+import {
+  MapPin,
+  LocateFixed,
+  RefreshCw,
+  TriangleAlert,
+  X,
+} from "lucide-react";
 import { useLang } from "@/i18n/language-provider";
 import { useLocation } from "@/lib/location-provider";
 import { Button, Spinner } from "./ui";
 
 export function LocationBar() {
   const { t } = useLang();
-  const { place, coords, status, detect } = useLocation();
+  const { place, coords, status, detect, clear } = useLocation();
 
   const locating = status === "locating";
 
@@ -66,20 +72,28 @@ export function LocationBar() {
           </p>
         </div>
       </div>
-      <button
-        type="button"
-        onClick={detect}
-        disabled={locating}
-        aria-label={t("location.redetect")}
-        title={t("location.redetect")}
-        className="grid size-9 shrink-0 place-items-center rounded-full border border-border text-muted-foreground transition hover:bg-muted disabled:opacity-50"
-      >
-        {locating ? (
-          <Spinner />
-        ) : (
-          <RefreshCw className="size-4" />
-        )}
-      </button>
+      <div className="flex shrink-0 items-center gap-1.5">
+        <button
+          type="button"
+          onClick={detect}
+          disabled={locating}
+          aria-label={t("location.redetect")}
+          title={t("location.redetect")}
+          className="grid size-9 place-items-center rounded-full border border-border text-muted-foreground transition hover:bg-muted disabled:opacity-50"
+        >
+          {locating ? <Spinner /> : <RefreshCw className="size-4" />}
+        </button>
+        <button
+          type="button"
+          onClick={clear}
+          disabled={locating}
+          aria-label={t("location.change")}
+          title={t("location.change")}
+          className="grid size-9 place-items-center rounded-full border border-border text-muted-foreground transition hover:bg-muted disabled:opacity-50"
+        >
+          <X className="size-4" />
+        </button>
+      </div>
     </div>
   );
 }
