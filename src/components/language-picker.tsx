@@ -9,6 +9,9 @@ import { cn } from "./ui";
 export function LanguagePicker() {
   const { lang, setLang, t } = useLang();
   const [open, setOpen] = useState(false);
+  // In the desktop side-nav the button sits near the viewport bottom, so the
+  // menu must flip upward when there isn't room below it.
+  const [dropUp, setDropUp] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,7 +36,12 @@ export function LanguagePicker() {
     <div ref={rootRef} className="relative">
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          const rect = rootRef.current?.getBoundingClientRect();
+          // Menu is ~5 rows × 36px + padding; flip up if it wouldn't fit.
+          if (rect) setDropUp(window.innerHeight - rect.bottom < 220);
+          setOpen((o) => !o);
+        }}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={t("settings.language")}
@@ -50,7 +58,10 @@ export function LanguagePicker() {
         <ul
           role="listbox"
           aria-label={t("settings.language")}
-          className="absolute right-0 z-50 mt-2 w-40 overflow-hidden rounded-[var(--radius-md)] border border-border bg-card py-1 shadow-lg"
+          className={cn(
+            "absolute right-0 z-50 w-40 overflow-hidden rounded-[var(--radius-md)] border border-border bg-card py-1 shadow-lg",
+            dropUp ? "bottom-full mb-2" : "top-full mt-2",
+          )}
         >
           {LANGS.map((l) => {
             const active = l.code === lang;
