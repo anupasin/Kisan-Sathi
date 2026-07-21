@@ -1,38 +1,53 @@
 import { NextResponse } from "next/server";
-import type { ApiResult, WeatherData } from "@/lib/types";
+import type { ApiResult, Localized, WeatherData } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function advice(
-  temp: number,
-  rain: number,
-  humidity: number,
-): { en: string; hi: string } {
-  if (rain >= 10)
-    return {
-      en: "Good rain recently — hold off on irrigation and check fields for waterlogging.",
-      hi: "हाल में अच्छी बारिश — सिंचाई रोकें और खेत में जलभराव जाँचें।",
-    };
-  if (temp >= 38)
-    return {
-      en: "Very hot — irrigate early morning or evening and mulch to save moisture.",
-      hi: "बहुत गर्मी — सुबह या शाम सिंचाई करें और नमी बचाने हेतु मल्चिंग करें।",
-    };
-  if (humidity >= 80)
-    return {
-      en: "High humidity — watch for fungal disease and ensure good air flow between plants.",
-      hi: "अधिक नमी — फफूँद रोग पर नज़र रखें और पौधों के बीच हवा का आवागमन रखें।",
-    };
-  if (temp <= 10)
-    return {
-      en: "Cold spell — protect seedlings from frost with light irrigation at evening.",
-      hi: "ठंड — शाम को हल्की सिंचाई कर पौध को पाले से बचाएँ।",
-    };
-  return {
+const ADVICE: Record<"rain" | "heat" | "humid" | "cold" | "fine", Localized> = {
+  rain: {
+    en: "Good rain recently — hold off on irrigation and check fields for waterlogging.",
+    hi: "हाल में अच्छी बारिश — सिंचाई रोकें और खेत में जलभराव जाँचें।",
+    te: "ఇటీవల మంచి వర్షం — సాగునీరు ఆపి, పొలంలో నీటి నిల్వను తనిఖీ చేయండి.",
+    kn: "ಇತ್ತೀಚೆಗೆ ಒಳ್ಳೆಯ ಮಳೆ — ನೀರಾವರಿ ನಿಲ್ಲಿಸಿ, ಹೊಲದಲ್ಲಿ ನೀರು ನಿಂತಿದೆಯೇ ಪರಿಶೀಲಿಸಿ.",
+    ta: "சமீபத்தில் நல்ல மழை — நீர்ப்பாசனத்தை நிறுத்தி வயலில் நீர் தேக்கத்தைச் சரிபார்க்கவும்.",
+  },
+  heat: {
+    en: "Very hot — irrigate early morning or evening and mulch to save moisture.",
+    hi: "बहुत गर्मी — सुबह या शाम सिंचाई करें और नमी बचाने हेतु मल्चिंग करें।",
+    te: "చాలా వేడి — ఉదయం లేదా సాయంత్రం నీరు పెట్టండి, తేమ కాపాడేందుకు మల్చింగ్ చేయండి.",
+    kn: "ತುಂಬಾ ಬಿಸಿ — ಬೆಳಿಗ್ಗೆ ಅಥವಾ ಸಂಜೆ ನೀರು ಹಾಯಿಸಿ, ತೇವಾಂಶ ಉಳಿಸಲು ಮಲ್ಚಿಂಗ್ ಮಾಡಿ.",
+    ta: "மிகவும் வெப்பம் — அதிகாலை அல்லது மாலையில் நீர் பாய்ச்சி, ஈரப்பதம் காக்க மல்ச்சிங் செய்யவும்.",
+  },
+  humid: {
+    en: "High humidity — watch for fungal disease and ensure good air flow between plants.",
+    hi: "अधिक नमी — फफूँद रोग पर नज़र रखें और पौधों के बीच हवा का आवागमन रखें।",
+    te: "అధిక తేమ — శిలీంధ్ర రోగాలపై నిఘా ఉంచండి, మొక్కల మధ్య గాలి ఆడేలా చూడండి.",
+    kn: "ಹೆಚ್ಚು ತೇವಾಂಶ — ಶಿಲೀಂಧ್ರ ರೋಗದ ಬಗ್ಗೆ ಎಚ್ಚರವಿರಲಿ, ಗಿಡಗಳ ನಡುವೆ ಗಾಳಿ ಆಡುವಂತೆ ನೋಡಿಕೊಳ್ಳಿ.",
+    ta: "அதிக ஈரப்பதம் — பூஞ்சை நோய்களைக் கவனிக்கவும், செடிகளுக்கு இடையே காற்றோட்டம் இருக்கட்டும்.",
+  },
+  cold: {
+    en: "Cold spell — protect seedlings from frost with light irrigation at evening.",
+    hi: "ठंड — शाम को हल्की सिंचाई कर पौध को पाले से बचाएँ।",
+    te: "చలి — సాయంత్రం తేలికపాటి నీరు పెట్టి నారు మొక్కలను మంచు నుంచి కాపాడండి.",
+    kn: "ಚಳಿ — ಸಂಜೆ ಲಘು ನೀರಾವರಿ ಮಾಡಿ ಸಸಿಗಳನ್ನು ಇಬ್ಬನಿಯಿಂದ ರಕ್ಷಿಸಿ.",
+    ta: "குளிர் — மாலையில் இலேசாக நீர் பாய்ச்சி நாற்றுகளை பனியிலிருந்து காக்கவும்.",
+  },
+  fine: {
     en: "Weather is favourable for most field work today.",
     hi: "आज अधिकांश खेती कार्य के लिए मौसम अनुकूल है।",
-  };
+    te: "ఈరోజు చాలా వ్యవసాయ పనులకు వాతావరణం అనుకూలంగా ఉంది.",
+    kn: "ಇಂದು ಹೆಚ್ಚಿನ ಕೃಷಿ ಕೆಲಸಗಳಿಗೆ ಹವಾಮಾನ ಅನುಕೂಲವಾಗಿದೆ.",
+    ta: "இன்று பெரும்பாலான வயல் வேலைகளுக்கு வானிலை சாதகமாக உள்ளது.",
+  },
+};
+
+function advice(temp: number, rain: number, humidity: number): Localized {
+  if (rain >= 10) return ADVICE.rain;
+  if (temp >= 38) return ADVICE.heat;
+  if (humidity >= 80) return ADVICE.humid;
+  if (temp <= 10) return ADVICE.cold;
+  return ADVICE.fine;
 }
 
 export async function GET(request: Request) {

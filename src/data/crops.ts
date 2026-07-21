@@ -1,8 +1,8 @@
-import type { Season } from "@/lib/types";
+import type { Localized, Season } from "@/lib/types";
 
 export type Crop = {
   id: string;
-  name: { en: string; hi: string };
+  name: Localized;
   emoji: string;
   seasons: Season[];
   /** USDA texture keys this crop grows well in (from lib/soil.ts). */
@@ -19,7 +19,13 @@ export type Crop = {
 export const CROPS: Crop[] = [
   {
     id: "rice",
-    name: { en: "Paddy (Rice)", hi: "धान (चावल)" },
+    name: {
+      en: "Paddy (Rice)",
+      hi: "धान (चावल)",
+      te: "వరి (బియ్యం)",
+      kn: "ಭತ್ತ (ಅಕ್ಕಿ)",
+      ta: "நெல் (அரிசி)",
+    },
     emoji: "🌾",
     seasons: ["kharif"],
     soils: ["clay", "silty_clay", "silty_clay_loam", "clay_loam", "silt_loam", "silt"],
@@ -31,7 +37,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "maize",
-    name: { en: "Maize", hi: "मक्का" },
+    name: {
+      en: "Maize",
+      hi: "मक्का",
+      te: "మొక్కజొన్న",
+      kn: "ಮೆಕ್ಕೆಜೋಳ",
+      ta: "மக்காச்சோளம்",
+    },
     emoji: "🌽",
     seasons: ["kharif", "rabi", "zaid"],
     soils: ["loam", "sandy_loam", "silt_loam", "clay_loam"],
@@ -43,7 +55,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "cotton",
-    name: { en: "Cotton", hi: "कपास" },
+    name: {
+      en: "Cotton",
+      hi: "कपास",
+      te: "పత్తి",
+      kn: "ಹತ್ತಿ",
+      ta: "பருத்தி",
+    },
     emoji: "🧵",
     seasons: ["kharif"],
     soils: ["clay", "clay_loam", "sandy_clay_loam", "sandy_clay"],
@@ -55,7 +73,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "soybean",
-    name: { en: "Soybean", hi: "सोयाबीन" },
+    name: {
+      en: "Soybean",
+      hi: "सोयाबीन",
+      te: "సోయాబీన్",
+      kn: "ಸೋಯಾಬೀನ್",
+      ta: "சோயாபீன்",
+    },
     emoji: "🫘",
     seasons: ["kharif"],
     soils: ["clay", "clay_loam", "loam", "sandy_clay_loam"],
@@ -67,7 +91,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "groundnut",
-    name: { en: "Groundnut", hi: "मूँगफली" },
+    name: {
+      en: "Groundnut",
+      hi: "मूँगफली",
+      te: "వేరుశనగ",
+      kn: "ಕಡಲೆಕಾಯಿ",
+      ta: "நிலக்கடலை",
+    },
     emoji: "🥜",
     seasons: ["kharif", "zaid"],
     soils: ["sandy_loam", "loamy_sand", "sand", "sandy_clay_loam"],
@@ -79,7 +109,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "bajra",
-    name: { en: "Pearl millet (Bajra)", hi: "बाजरा" },
+    name: {
+      en: "Pearl millet (Bajra)",
+      hi: "बाजरा",
+      te: "సజ్జలు",
+      kn: "ಸಜ್ಜೆ",
+      ta: "கம்பு",
+    },
     emoji: "🌾",
     seasons: ["kharif"],
     soils: ["sand", "loamy_sand", "sandy_loam"],
@@ -91,7 +127,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "sugarcane",
-    name: { en: "Sugarcane", hi: "गन्ना" },
+    name: {
+      en: "Sugarcane",
+      hi: "गन्ना",
+      te: "చెరకు",
+      kn: "ಕಬ್ಬು",
+      ta: "கரும்பு",
+    },
     emoji: "🎋",
     seasons: ["kharif", "zaid"],
     soils: ["loam", "clay_loam", "silt_loam", "silty_clay_loam"],
@@ -103,7 +145,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "wheat",
-    name: { en: "Wheat", hi: "गेहूँ" },
+    name: {
+      en: "Wheat",
+      hi: "गेहूँ",
+      te: "గోధుమ",
+      kn: "ಗೋಧಿ",
+      ta: "கோதுமை",
+    },
     emoji: "🌾",
     seasons: ["rabi"],
     soils: ["loam", "clay_loam", "silt_loam", "sandy_loam", "silty_clay_loam"],
@@ -115,7 +163,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "gram",
-    name: { en: "Gram (Chana)", hi: "चना" },
+    name: {
+      en: "Gram (Chana)",
+      hi: "चना",
+      te: "శనగ",
+      kn: "ಕಡಲೆ",
+      ta: "கொண்டைக்கடலை",
+    },
     emoji: "🫛",
     seasons: ["rabi"],
     soils: ["clay", "clay_loam", "sandy_clay_loam", "loam"],
@@ -127,7 +181,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "mustard",
-    name: { en: "Mustard", hi: "सरसों" },
+    name: {
+      en: "Mustard",
+      hi: "सरसों",
+      te: "ఆవాలు",
+      kn: "ಸಾಸಿವೆ",
+      ta: "கடுகு",
+    },
     emoji: "🌼",
     seasons: ["rabi"],
     soils: ["loam", "sandy_loam", "clay_loam"],
@@ -139,7 +199,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "potato",
-    name: { en: "Potato", hi: "आलू" },
+    name: {
+      en: "Potato",
+      hi: "आलू",
+      te: "బంగాళాదుంప",
+      kn: "ಆಲೂಗಡ್ಡೆ",
+      ta: "உருளைக்கிழங்கு",
+    },
     emoji: "🥔",
     seasons: ["rabi"],
     soils: ["sandy_loam", "loam", "loamy_sand", "silt_loam"],
@@ -151,7 +217,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "onion",
-    name: { en: "Onion", hi: "प्याज़" },
+    name: {
+      en: "Onion",
+      hi: "प्याज़",
+      te: "ఉల్లిపాయ",
+      kn: "ಈರುಳ್ಳಿ",
+      ta: "வெங்காயம்",
+    },
     emoji: "🧅",
     seasons: ["rabi", "kharif"],
     soils: ["sandy_loam", "loam", "silt_loam"],
@@ -163,7 +235,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "tomato",
-    name: { en: "Tomato", hi: "टमाटर" },
+    name: {
+      en: "Tomato",
+      hi: "टमाटर",
+      te: "టమాటా",
+      kn: "ಟೊಮೇಟೊ",
+      ta: "தக்காளி",
+    },
     emoji: "🍅",
     seasons: ["rabi", "kharif", "zaid"],
     soils: ["sandy_loam", "loam", "clay_loam"],
@@ -175,7 +253,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "lentil",
-    name: { en: "Lentil (Masur)", hi: "मसूर" },
+    name: {
+      en: "Lentil (Masur)",
+      hi: "मसूर",
+      te: "మసూర్ పప్పు",
+      kn: "ಮಸೂರ್ ಬೇಳೆ",
+      ta: "மைசூர் பருப்பு",
+    },
     emoji: "🫘",
     seasons: ["rabi"],
     soils: ["loam", "clay_loam", "silt_loam"],
@@ -187,7 +271,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "greengram",
-    name: { en: "Green gram (Moong)", hi: "मूँग" },
+    name: {
+      en: "Green gram (Moong)",
+      hi: "मूँग",
+      te: "పెసలు",
+      kn: "ಹೆಸರು ಕಾಳು",
+      ta: "பச்சைப்பயறு",
+    },
     emoji: "🫛",
     seasons: ["zaid", "kharif"],
     soils: ["sandy_loam", "loam", "sandy_clay_loam"],
@@ -199,7 +289,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "watermelon",
-    name: { en: "Watermelon", hi: "तरबूज़" },
+    name: {
+      en: "Watermelon",
+      hi: "तरबूज़",
+      te: "పుచ్చకాయ",
+      kn: "ಕಲ್ಲಂಗಡಿ",
+      ta: "தர்பூசணி",
+    },
     emoji: "🍉",
     seasons: ["zaid"],
     soils: ["sand", "loamy_sand", "sandy_loam"],
@@ -211,7 +307,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "cucumber",
-    name: { en: "Cucumber", hi: "खीरा" },
+    name: {
+      en: "Cucumber",
+      hi: "खीरा",
+      te: "దోసకాయ",
+      kn: "ಸೌತೆಕಾಯಿ",
+      ta: "வெள்ளரிக்காய்",
+    },
     emoji: "🥒",
     seasons: ["zaid", "kharif"],
     soils: ["sandy_loam", "loam"],
@@ -223,7 +325,13 @@ export const CROPS: Crop[] = [
   },
   {
     id: "turmeric",
-    name: { en: "Turmeric", hi: "हल्दी" },
+    name: {
+      en: "Turmeric",
+      hi: "हल्दी",
+      te: "పసుపు",
+      kn: "ಅರಿಶಿನ",
+      ta: "மஞ்சள்",
+    },
     emoji: "🟡",
     seasons: ["kharif"],
     soils: ["loam", "clay_loam", "sandy_loam", "laterite"],

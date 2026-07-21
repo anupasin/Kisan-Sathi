@@ -2,19 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sprout, Wheat, Landmark, ScanLine, MapPin } from "lucide-react";
+import { Sprout, MapPin } from "lucide-react";
 import { useT } from "@/i18n/language-provider";
 import { useLocation } from "@/lib/location-provider";
-import { LanguageToggle } from "./language-toggle";
+import { primaryTabs, moreItems, isActive } from "@/lib/nav";
+import { LanguagePicker } from "./language-picker";
 import { ThemeToggle } from "./theme-toggle";
 import { cn } from "./ui";
 
-const tabs = [
-  { href: "/", key: "nav.home", icon: Sprout },
-  { href: "/crops", key: "nav.crops", icon: Wheat },
-  { href: "/support", key: "nav.support", icon: Landmark },
-  { href: "/scan", key: "nav.scan", icon: ScanLine },
-] as const;
+// Desktop has room for everything: primary tabs (minus "More") + more items.
+const tabs = [...primaryTabs.filter((i) => i.href !== "/more"), ...moreItems];
 
 export function SideNav() {
   const pathname = usePathname();
@@ -38,9 +35,9 @@ export function SideNav() {
       </div>
 
       <nav className="flex flex-1 flex-col gap-1 p-3">
-        {tabs.map(({ href, key, icon: Icon }) => {
-          const active =
-            href === "/" ? pathname === "/" : pathname.startsWith(href);
+        {tabs.map((item) => {
+          const { href, key, icon: Icon } = item;
+          const active = isActive(item, pathname);
           return (
             <Link
               key={href}
@@ -78,7 +75,7 @@ export function SideNav() {
           </div>
         ) : null}
         <div className="flex items-center justify-between gap-2">
-          <LanguageToggle />
+          <LanguagePicker />
           <ThemeToggle />
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { Landmark, Phone, ExternalLink, Info, Building2 } from "lucide-react";
 import { useLang } from "@/i18n/language-provider";
+import type { Lang } from "@/i18n/dictionaries";
 import { useLocation } from "@/lib/location-provider";
 import { SCHEMES, agenciesForLocation, type Agency } from "@/data/schemes";
 import { PageHeading } from "@/components/bits";
@@ -73,7 +74,7 @@ function AgencyCard({
   visit,
 }: {
   agency: Agency;
-  lang: "en" | "hi";
+  lang: Lang;
   tapLabel: string;
   visit: string;
 }) {

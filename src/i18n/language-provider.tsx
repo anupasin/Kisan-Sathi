@@ -8,14 +8,13 @@ import {
   useMemo,
   useState,
 } from "react";
-import { dictionaries, type Dict, type Lang } from "./dictionaries";
+import { dictionaries, isLang, type Dict, type Lang } from "./dictionaries";
 
 const STORAGE_KEY = "kisan-lang";
 
 type LanguageContextValue = {
   lang: Lang;
   setLang: (l: Lang) => void;
-  toggle: () => void;
   /** Translate a dot-path key, e.g. t("home.soilType"). */
   t: (key: string) => string;
   dict: Dict;
@@ -41,7 +40,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === "en" || stored === "hi") setLangState(stored);
+    if (isLang(stored)) setLangState(stored);
   }, []);
 
   useEffect(() => {
@@ -53,17 +52,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     window.localStorage.setItem(STORAGE_KEY, l);
   }, []);
 
-  const toggle = useCallback(
-    () => setLang(lang === "en" ? "hi" : "en"),
-    [lang, setLang],
-  );
-
   const dict = dictionaries[lang];
   const t = useCallback((key: string) => resolve(dict, key), [dict]);
 
   const value = useMemo(
-    () => ({ lang, setLang, toggle, t, dict }),
-    [lang, setLang, toggle, t, dict],
+    () => ({ lang, setLang, t, dict }),
+    [lang, setLang, t, dict],
   );
 
   return (

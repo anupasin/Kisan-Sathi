@@ -3,6 +3,7 @@
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/i18n/language-provider";
 import { LocationProvider } from "@/lib/location-provider";
+import { AuthProvider } from "./auth-provider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -13,7 +14,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <LanguageProvider>
-        <LocationProvider>{children}</LocationProvider>
+        <AuthProvider>
+          <LocationProvider>{children}</LocationProvider>
+        </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

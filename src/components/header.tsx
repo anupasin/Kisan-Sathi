@@ -2,7 +2,7 @@
 
 import { Sprout } from "lucide-react";
 import { useT } from "@/i18n/language-provider";
-import { LanguageToggle } from "./language-toggle";
+import { LanguagePicker } from "./language-picker";
 import { ThemeToggle } from "./theme-toggle";
 
 export function Header() {
@@ -24,7 +24,7 @@ export function Header() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <LanguageToggle />
+          <LanguagePicker />
           <ThemeToggle />
         </div>
       </div>

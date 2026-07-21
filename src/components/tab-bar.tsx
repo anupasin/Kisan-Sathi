@@ -2,26 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sprout, Wheat, Landmark, ScanLine } from "lucide-react";
 import { useT } from "@/i18n/language-provider";
+import { primaryTabs, isActive } from "@/lib/nav";
 import { cn } from "./ui";
-
-const tabs = [
-  { href: "/", key: "nav.home", icon: Sprout },
-  { href: "/crops", key: "nav.crops", icon: Wheat },
-  { href: "/support", key: "nav.support", icon: Landmark },
-  { href: "/scan", key: "nav.scan", icon: ScanLine },
-] as const;
 
 export function TabBar() {
   const pathname = usePathname();
   const t = useT();
   return (
     <nav className="sticky bottom-0 z-30 border-t border-border bg-background/90 backdrop-blur-md md:hidden">
-      <div className="mx-auto grid max-w-lg grid-cols-4">
-        {tabs.map(({ href, key, icon: Icon }) => {
-          const active =
-            href === "/" ? pathname === "/" : pathname.startsWith(href);
+      <div className="mx-auto grid max-w-lg grid-cols-5">
+        {primaryTabs.map((item) => {
+          const { href, key, icon: Icon } = item;
+          const active = isActive(item, pathname);
           return (
             <Link
               key={href}

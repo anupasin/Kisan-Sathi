@@ -22,7 +22,8 @@
   --danger: #c2402f;
   --danger-foreground: #ffffff;
   --radius: 0.9rem;
-  --font-sans-app: var(--font-latin), var(--font-deva), system-ui, -apple-system,
+  --font-sans-app: var(--font-latin), var(--font-deva), var(--font-telu),
+    var(--font-kann), var(--font-tami), system-ui, -apple-system,
     "Segoe UI", sans-serif;
 }
 

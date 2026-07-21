@@ -2,14 +2,29 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import { ScanLine, RefreshCw, Sparkles, KeyRound, History, Trash2 } from "lucide-react";
+import Link from "next/link";
+import {
+  ScanLine,
+  RefreshCw,
+  Sparkles,
+  KeyRound,
+  History,
+  Trash2,
+  LogIn,
+  Crown,
+  Cloud,
+} from "lucide-react";
 import { useLang } from "@/i18n/language-provider";
+import { useAuth } from "@/components/auth-provider";
+import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { scanPlant } from "@/lib/api";
 import type { ScanResult } from "@/lib/types";
 import { PageHeading } from "@/components/bits";
 import { CameraCapture } from "@/components/camera-capture";
 import { ScanResultView } from "@/components/scan-result";
-import { Button, Spinner } from "@/components/ui";
+import { Badge, Button, Spinner } from "@/components/ui";
+
+const FREE_SCANS = 5;
 
 const HISTORY_KEY = "kisan-scan-history";
 
@@ -38,11 +53,39 @@ function makeThumb(dataUrl: string): Promise<string> {
 
 export default function ScanPage() {
   const { t, lang } = useLang();
+  const { user, premium, loading: authLoading } = useAuth();
   const [image, setImage] = useState<string | null>(null);
   const [result, setResult] = useState<ScanResult | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [used, setUsed] = useState<number | null>(null);
+
+  // Quota pill for signed-in free users.
+  const refreshUsage = useCallback(async () => {
+    if (!user) return;
+    const supabase = getSupabaseBrowser();
+    const { data } = await supabase
+      .from("scan_usage")
+      .select("count")
+      .eq("user_id", user.id)
+      .eq(
+        "month_key",
+        new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Kolkata",
+          year: "numeric",
+          month: "2-digit",
+        })
+          .format(new Date())
+          .slice(0, 7),
+      )
+      .maybeSingle();
+    setUsed(data?.count ?? 0);
+  }, [user]);
+
+  useEffect(() => {
+    void refreshUsage();
+  }, [refreshUsage]);
 
   useEffect(() => {
     try {
@@ -79,13 +122,19 @@ export default function ScanPage() {
     setAnalyzing(true);
     setError(null);
     const base64 = image.split(",")[1] ?? "";
-    const res = await scanPlant({ image: base64, mediaType: "image/jpeg", lang });
+    const thumb = await makeThumb(image);
+    const res = await scanPlant({
+      image: base64,
+      mediaType: "image/jpeg",
+      lang,
+      thumb,
+    });
     setAnalyzing(false);
 
     if (res.ok && res.data) {
       setResult(res.data);
+      void refreshUsage();
       if (res.data.isPlant) {
-        const thumb = await makeThumb(image);
         const item: HistoryItem = {
           id: crypto.randomUUID(),
           thumb,
@@ -94,10 +143,18 @@ export default function ScanPage() {
         };
         persist([item, ...history].slice(0, 6));
       }
+    } else if (res.error === "auth_required") {
+      setError("authRequired");
+    } else if (res.error === "quota_exceeded") {
+      setError("quotaExceeded");
+      void refreshUsage();
     } else {
       setError(res.error === "missing_api_key" ? "needsKey" : "failed");
     }
   };
+
+  const scansLeft =
+    used != null ? Math.max(0, FREE_SCANS - used) : null;
 
   return (
     <div className="space-y-4">
@@ -106,6 +163,26 @@ export default function ScanPage() {
         subtitle={t("scan.subtitle")}
         icon={<ScanLine className="size-6" />}
       />
+
+      {/* Quota / sign-in status */}
+      {!authLoading && !user ? (
+        <Link
+          href="/login?next=/scan"
+          className="flex items-center gap-2.5 rounded-[var(--radius-lg)] border border-border bg-card p-3.5 text-sm shadow-sm"
+        >
+          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary/12 text-primary">
+            <LogIn className="size-4.5" />
+          </span>
+          <span className="flex-1">{t("scan.signInNotice")}</span>
+        </Link>
+      ) : user && premium === false && scansLeft != null ? (
+        <div className="flex items-center justify-between rounded-[var(--radius-lg)] border border-border bg-card px-3.5 py-2.5 text-sm shadow-sm">
+          <span className="text-muted-foreground">{t("scan.quotaLeft")}</span>
+          <Badge tone={scansLeft > 0 ? "success" : "danger"}>
+            {scansLeft} / {FREE_SCANS}
+          </Badge>
+        </div>
+      ) : null}
 
       {!image ? (
         <CameraCapture onImage={onImage} />
@@ -152,6 +229,28 @@ export default function ScanPage() {
         <Notice icon={<RefreshCw className="size-5" />} tone="danger">
           {t("scan.failed")}
         </Notice>
+      ) : error === "authRequired" ? (
+        <div className="space-y-2 rounded-[var(--radius-lg)] bg-warning/12 p-4 text-sm">
+          <p className="text-foreground/90">{t("scan.signInNotice")}</p>
+          <Link
+            href="/login?next=/scan"
+            className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-medium text-primary-foreground"
+          >
+            <LogIn className="size-4" />
+            {t("auth.signIn")}
+          </Link>
+        </div>
+      ) : error === "quotaExceeded" ? (
+        <div className="space-y-2 rounded-[var(--radius-lg)] bg-warning/12 p-4 text-sm">
+          <p className="text-foreground/90">{t("scan.quotaExceeded")}</p>
+          <Link
+            href="/premium"
+            className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 font-medium text-primary-foreground"
+          >
+            <Crown className="size-4" />
+            {t("scan.goPremium")}
+          </Link>
+        </div>
       ) : null}
 
       {result ? <ScanResultView result={result} /> : null}
@@ -162,6 +261,15 @@ export default function ScanPage() {
           <h2 className="flex items-center gap-2 font-semibold">
             <History className="size-4 text-primary" />
             {t("scan.history")}
+            {premium ? (
+              <Link
+                href="/scan/history"
+                className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"
+              >
+                <Cloud className="size-3.5" />
+                {t("scan.cloudHistory")}
+              </Link>
+            ) : null}
           </h2>
           {history.length > 0 ? (
             <button

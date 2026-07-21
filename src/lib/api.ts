@@ -1,3 +1,4 @@
+import type { Lang } from "@/i18n/dictionaries";
 import type {
   ApiResult,
   Coords,
@@ -47,7 +48,9 @@ export function fetchMarket(state?: string, commodity?: string) {
 export async function scanPlant(input: {
   image: string;
   mediaType: string;
-  lang: "en" | "hi";
+  lang: Lang;
+  /** Optional 96px JPEG data-URL, stored server-side for premium history. */
+  thumb?: string;
 }): Promise<ApiResult<ScanResult>> {
   try {
     const r = await fetch("/api/scan", {

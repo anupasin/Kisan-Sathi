@@ -1,3 +1,11 @@
+import type { Lang } from "@/i18n/dictionaries";
+
+/**
+ * A string localized into every supported language. Record<Lang, string>
+ * makes a missing translation a compile-time error.
+ */
+export type Localized = Record<Lang, string>;
+
 export type Coords = { lat: number; lon: number };
 
 export type Place = {
@@ -10,15 +18,15 @@ export type Place = {
 export type SoilData = {
   /** USDA texture class key, e.g. "clay_loam" */
   textureKey: string;
-  textureName: { en: string; hi: string };
-  soilGroup: { en: string; hi: string };
+  textureName: Localized;
+  soilGroup: Localized;
   ph: number | null;
   organicCarbon: number | null; // g/kg
   sand: number | null; // %
   silt: number | null; // %
   clay: number | null; // %
   fertility: "low" | "medium" | "high";
-  suitability: { en: string; hi: string };
+  suitability: Localized;
 };
 
 export type WeatherData = {
@@ -27,7 +35,7 @@ export type WeatherData = {
   rainfall: number; // last 24h mm
   windspeed: number;
   code: number;
-  advice: { en: string; hi: string };
+  advice: Localized;
 };
 
 export type MarketRow = {
