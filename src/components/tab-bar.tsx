@@ -17,7 +17,7 @@ export function TabBar() {
   const pathname = usePathname();
   const t = useT();
   return (
-    <nav className="sticky bottom-0 z-30 border-t border-border bg-background/90 backdrop-blur-md">
+    <nav className="sticky bottom-0 z-30 border-t border-border bg-background/90 backdrop-blur-md md:hidden">
       <div className="mx-auto grid max-w-lg grid-cols-4">
         {tabs.map(({ href, key, icon: Icon }) => {
           const active =

@@ -49,10 +49,10 @@ export default function HomePage() {
       <LocationBar />
 
       {coords ? (
-        <>
+        <div className="grid gap-4 md:grid-cols-2 md:items-start">
           <SoilCard result={soil} loading={loading} />
           <WeatherCard result={weather} loading={loading} />
-        </>
+        </div>
       ) : (
         <WelcomeCard />
       )}
