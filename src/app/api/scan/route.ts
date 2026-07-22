@@ -4,6 +4,7 @@ import { z } from "zod";
 import type { ApiResult, ScanResult } from "@/lib/types";
 import { getUser, isPremium } from "@/lib/dal";
 import { getServiceClient, getSupabaseServer } from "@/lib/supabase/server";
+import { cropHealthConfigured, identifyCrop } from "@/lib/plant-id";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,7 +12,7 @@ export const maxDuration = 60;
 
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5";
 
-const FREE_SCANS_PER_MONTH = 5;
+const FREE_SCANS_PER_MONTH = 30;
 // Effectively unlimited; still counted for usage stats.
 const PREMIUM_SCAN_LIMIT = 1_000_000;
 
@@ -142,17 +143,56 @@ export async function POST(request: Request) {
 
   const languageName = LANGUAGE_NAMES[parsed.lang];
 
+  // --- Stage 1: dedicated crop-ID model (never throws) ---
+  const idOutcome = cropHealthConfigured()
+    ? await identifyCrop({
+        image: parsed.image,
+        mediaType: parsed.mediaType,
+        lang: parsed.lang,
+      })
+    : ({ ok: false, reason: "not_configured" } as const);
+  const idUsed = idOutcome.ok;
+
+  // Build the prior Claude reasons from. Claude always also sees the photo, so
+  // a failed/low-confidence stage-1 degrades to Claude identifying on its own.
+  let priorNote: string;
+  if (idOutcome.ok && idOutcome.data.isPlant) {
+    const d = idOutcome.data;
+    const pct = Math.round(d.confidence * 100);
+    const finding = d.disease
+      ? `the most likely problem is "${d.disease}"`
+      : d.isHealthy === true
+        ? "it judged the plant healthy"
+        : "it did not pin down a specific disease";
+    priorNote =
+      `A specialist crop-identification model analysed this photo first. Treat its finding as a ` +
+      `strong prior, but you also have the photo — confirm or correct it. It reports: crop = ` +
+      `"${d.crop ?? "uncertain"}"; ${finding}; specialist confidence = ${pct}%. If that confidence ` +
+      `is low (roughly below 50%) or its finding conflicts with what you see, HEDGE clearly: tell ` +
+      `the farmer what it looks like and exactly what to check to confirm, and set the confidence ` +
+      `field to "low".`;
+  } else if (idOutcome.ok) {
+    priorNote =
+      `A specialist crop-identification model did not detect a plant in this image. If you agree it ` +
+      `is not a plant/crop/leaf, set isPlant false; otherwise identify it yourself and be cautious.`;
+  } else {
+    priorNote =
+      `(The specialist crop-identification service was unavailable for this photo — identify the crop, ` +
+      `growth stage and any disease directly from the image yourself, and be honest about uncertainty.)`;
+  }
+
   try {
     const client = new Anthropic({ apiKey });
     const message = await client.messages.create({
       model: MODEL,
       max_tokens: 1024,
       system:
-        `You are an expert agronomist helping Indian small farmers. Analyse the plant photo. ` +
-        `Identify the crop, its growth stage, and whether it is healthy. If unhealthy, name the ` +
-        `disease/pest/deficiency and give practical, affordable treatment and prevention suited to ` +
-        `Indian farming. Write ALL text field values in ${languageName}, in simple words a farmer ` +
-        `understands. Be honest about uncertainty. Always call the report_plant tool.`,
+        `You are an expert agronomist helping Indian small farmers. ${priorNote} ` +
+        `Using the specialist finding above together with the photo, identify the crop, its growth ` +
+        `stage, and whether it is healthy. If unhealthy, name the disease/pest/deficiency and give ` +
+        `practical, affordable treatment and prevention suited to Indian farming. Write ALL text ` +
+        `field values in ${languageName}, in simple words a farmer understands. Be honest about ` +
+        `uncertainty. Always call the report_plant tool.`,
       tools: [TOOL],
       tool_choice: { type: "tool", name: "report_plant" },
       messages: [
@@ -217,8 +257,9 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       data: result,
-      source: MODEL,
-      fallbackUsed: false,
+      source: idUsed ? `crop.health+${MODEL}` : MODEL,
+      // The crop-ID stage was skipped/unavailable; Claude-only was the fallback.
+      fallbackUsed: !idUsed,
     } satisfies ApiResult<ScanResult>);
   } catch (err) {
     await refund();

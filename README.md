@@ -9,13 +9,13 @@ a **voice AI assistant**, **mandi price & severe-weather push alerts**, a
 in **English, हिन्दी, తెలుగు, ಕನ್ನಡ and தமிழ்**, with light/dark mode, offline
 support (PWA) and a Play Store build (TWA).
 
-## Free vs Premium (₹199/year via Razorpay)
+## Free vs Premium (₹399/year via Razorpay)
 
 | Feature | Free | Premium |
 | --- | --- | --- |
 | Soil, weather, crops, mandi prices, schemes | ✓ | ✓ |
 | Fertilizer calculator, farm diary (basic) | ✓ | ✓ |
-| AI plant scans | 5 / month | Unlimited |
+| AI plant scans | 30 / month | Unlimited |
 | Scan history synced across devices | — | ✓ |
 | Mandi price & severe-weather push alerts | — | ✓ |
 | Voice AI assistant (Ask) | — | ✓ |

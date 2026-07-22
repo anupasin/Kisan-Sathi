@@ -1,8 +1,8 @@
 import "server-only";
 
 export const PLAN = {
-  id: "annual_199",
-  amountPaise: 19_900,
+  id: "annual_399",
+  amountPaise: 39_900,
   currency: "INR",
   days: 365,
 } as const;

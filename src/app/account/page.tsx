@@ -77,7 +77,7 @@ export default function AccountPage() {
             className="mt-3 flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
           >
             <Crown className="size-4" />
-            {t("premium.buy")} — ₹199 {t("premium.perYear")}
+            {t("premium.buy")} — ₹399 {t("premium.perYear")}
           </Link>
         ) : null}
       </Card>

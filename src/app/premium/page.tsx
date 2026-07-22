@@ -155,7 +155,7 @@ export default function PremiumPage() {
             {state === "processing" ? <Spinner /> : <Crown className="size-5" />}
             {state === "processing"
               ? t("premium.processing")
-              : `${t("premium.buy")} — ₹199 ${t("premium.perYear")}`}
+              : `${t("premium.buy")} — ₹399 ${t("premium.perYear")}`}
           </button>
           {state === "success" ? (
             <p className="rounded-[var(--radius-lg)] bg-success/12 p-4 text-sm">

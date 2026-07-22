@@ -52,7 +52,7 @@ bubblewrap build
 
 ## Billing compliance (India)
 
-The ₹199/year purchase currently happens via Razorpay on the web checkout.
+The ₹399/year purchase currently happens via Razorpay on the web checkout.
 Under Google Play's India rules (post-CCI, updated March 2026), apps serving
 Indian users may offer **alternative billing / user-choice billing**, and the
 March-2026 policy update also allows directing users to your website for

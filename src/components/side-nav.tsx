@@ -8,6 +8,7 @@ import { useLocation } from "@/lib/location-provider";
 import { primaryTabs, moreItems, isActive } from "@/lib/nav";
 import { LanguagePicker } from "./language-picker";
 import { ThemeToggle } from "./theme-toggle";
+import { UserMenu } from "./user-menu";
 import { cn } from "./ui";
 
 // Desktop has room for everything: primary tabs (minus "More") + more items.
@@ -75,7 +76,10 @@ export function SideNav() {
           </div>
         ) : null}
         <div className="flex items-center justify-between gap-2">
-          <LanguagePicker />
+          <div className="flex items-center gap-2">
+            <UserMenu />
+            <LanguagePicker />
+          </div>
           <ThemeToggle />
         </div>
       </div>

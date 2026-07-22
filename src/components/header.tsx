@@ -4,6 +4,7 @@ import { Sprout } from "lucide-react";
 import { useT } from "@/i18n/language-provider";
 import { LanguagePicker } from "./language-picker";
 import { ThemeToggle } from "./theme-toggle";
+import { UserMenu } from "./user-menu";
 
 export function Header() {
   const t = useT();
@@ -26,6 +27,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           <LanguagePicker />
           <ThemeToggle />
+          <UserMenu />
         </div>
       </div>
     </header>
